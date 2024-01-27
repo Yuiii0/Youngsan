@@ -22,7 +22,6 @@
       <img class="logo" src="/images/logo.png" alt="logo" />
       <nav class="navbar">
         <ul>
-          <li><a href="#introduction">Introduction</a></li>
           <li><a href="#location">Location</a></li>
           <li><a href="#place">Place</a></li>
         </ul>
@@ -33,13 +32,13 @@
         <div class="inner">
           <div class="intro-title">
             <h2>세계의 중심</h2>
-            <h2 id="type"></h2>
+            <h2>이제는 <strong id="type"></strong></h2>
           </div>
         </div>
       </section>
       <section id="location">
         <div class="inner">
-          <div id="map" style="width: 100%; height: 400px"></div>
+          <div id="map" style="width: 80%; height: 400px; color: black" ;></div>
 
           <script
             type="text/javascript"
@@ -48,58 +47,158 @@
           <script>
             var mapContainer = document.getElementById("map"), // 지도를 표시할 div
               mapOption = {
-                center: new kakao.maps.LatLng(37.54699, 127.09598), // 지도의 중심좌표
-                level: 8, // 지도의 확대 레벨
+                center: new kakao.maps.LatLng(37.545334, 126.964579), // 지도의 중심좌표
+                level: 9, // 지도의 확대 레벨
               };
 
-            var map = new kakao.maps.Map(mapContainer, mapOption);
+            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-            var imageSrc =
-                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // 마커이미지의 주소입니다
-              imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
-              imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+            // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+            if (navigator.geolocation) {
+              // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+              navigator.geolocation.getCurrentPosition(function (position) {
+                var lat = position.coords.latitude, // 위도
+                  lon = position.coords.longitude; // 경도
 
-            // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
-            var markerImage = new kakao.maps.MarkerImage(
-                imageSrc,
-                imageSize,
-                imageOption
-              ),
-              markerPosition = new kakao.maps.LatLng(37.54699, 127.09598); // 마커가 표시될 위치입니다
+                var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                  message =
+                    '<div style="padding:5px; border:none; text-align:center;">우리집 🏠</div>';
 
-            // 마커를 생성합니다
-            var marker = new kakao.maps.Marker({
-              position: markerPosition,
-              image: markerImage, // 마커이미지 설정
-            });
+                // 마커와 인포윈도우를 표시합니다
+                displayMarker(locPosition, message);
+              });
+            } else {
+              // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
 
-            // 마커가 지도 위에 표시되도록 설정합니다
-            marker.setMap(map);
-            // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-            var content =
-              '<div class="customoverlay">' +
-              '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
-              '    <span class="title">구의야구공원</span>' +
-              "  </a>" +
-              "</div>";
+              var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
+                message = "우리집";
 
-            // 커스텀 오버레이가 표시될 위치입니다
-            var position = new kakao.maps.LatLng(37.54699, 127.09598);
+              displayMarker(locPosition, message);
+            }
 
-            // 커스텀 오버레이를 생성합니다
-            var customOverlay = new kakao.maps.CustomOverlay({
-              map: map,
-              position: position,
-              content: content,
-              yAnchor: 1,
-            });
+            // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+            function displayMarker(locPosition, message) {
+              // 마커를 생성합니다
+              var marker = new kakao.maps.Marker({
+                map: map,
+                position: locPosition,
+              });
+
+              var iwContent = message, // 인포윈도우에 표시할 내용
+                iwRemoveable = true;
+
+              // 인포윈도우를 생성합니다
+              var infowindow = new kakao.maps.InfoWindow({
+                content: iwContent,
+                removable: iwRemoveable,
+              });
+
+              // 인포윈도우를 마커위에 표시합니다
+              infowindow.open(map, marker);
+
+              // 지도 중심좌표를 접속위치로 변경합니다
+              map.setCenter(locPosition);
+            }
           </script>
         </div>
       </section>
       <section id="place">
-        <div class="inner"></div>
+        <div class="inner">
+          <div class="place-title">
+            <h2>용산 Place</h2>
+            <p>용산에 핫플들을 소개합니다</p>
+            <p>많이들 놀러오세요 ☺️</p>
+          </div>
+        </div>
+        <div class="card-group">
+          <div class="card">
+            <div class="card-img">
+              <img src="/images/yonglidangil.jpeg" alt="" />
+            </div>
+            <div class="card-text">
+              <h3>용리단길</h3>
+              <p>
+                요즘 떠오르는 핫플인데, 규모가 크지 않아서 어딜가나 웨이팅이
+                항상 너무 많아요🥲
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-img">
+              <img src="/images/hannam_cafe.jpeg" alt="" />
+            </div>
+            <div class="card-text">
+              <h3>한남동 카페거리</h3>
+              <p>
+                한남동은 분위기가 좋아요 ☕️
+                <br />
+                <br />사진속 카페는 <strong>"콘하스"</strong>입니다 <br />
+                정말 가보고 싶었는데 웨이팅 너무 많아서 아직도 못가봤습니다..
+                여러분들도 시도해보세요...
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-img">
+              <img src="/images/itaewon.jpeg" alt="" />
+            </div>
+            <div class="card-text">
+              <h3>이태원</h3>
+              <p>
+                이국적인 분위기가 뿜뿜하는곳으로, 다양한 세계적인 음식들을
+                만나볼 수 있답니다! 🍽
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-img">
+              <img src="/images/park.png" alt="" />
+            </div>
+            <div class="card-text">
+              <h3>용산공원 미군기지</h3>
+              <p>
+                저는 아직 가보지 못했는데요...<br />
+                여기가 단풍명소래요 🍁<br />
+                바로 옆에 국립중앙박물관도 있답니다!
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-img">
+              <img src="/images/ntower.jpeg" alt="" />
+            </div>
+
+            <div class="card-text">
+              <h3>남산타워</h3>
+              <p>
+                남산타워는 용산에 있답니다!<br />
+                숨겨진 벚꽃 핫플입니다. 봄 되면 가보세요 🌸<br />
+                남산돈가스도 먹어주세요😋
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-img">
+              <img src="/images/cgv.webp" alt="" />
+            </div>
+            <div class="card-text">
+              <h3>용산 CGV</h3>
+              <p>
+                대한민국 국민 절반이 이용한 CGV 관람객 NO.1 <br />
+                용산CGV하면, IMAX 🍿
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
-    <footer></footer>
+    <footer>
+      <p>&copy; 2024 Yujiii All rights reserved.</p>
+      <ul class="logo_group">
+        <li><img src="/images/icons8-github-30.png" alt="" /></li>
+        <li><img src="/images/icons8-instagram-24.png" alt="" /></li>
+        <li><img src="/images/icons8-twitter-30.png" alt="" /></li>
+      </ul>
+    </footer>
   </body>
 </html>
